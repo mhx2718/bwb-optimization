@@ -1,0 +1,18 @@
+{
+  "probability_gate": 0.9,
+  "stress_margin_definition": "probability_feasible - probability_gate",
+  "stress_color_map": "viridis",
+  "stress_color_vmin": 0.0,
+  "stress_color_vmax": 0.09301858688625063,
+  "stress_color_clipping": true,
+  "case_colors": {
+    "1": "#2F6B9A",
+    "2": "#D97732",
+    "3": "#3A8A6A"
+  },
+  "case_markers": {
+    "1": "o",
+    "2": "s",
+    "3": "^"
+  }
+}

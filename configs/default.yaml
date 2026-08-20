@@ -1,0 +1,134 @@
+project:
+  data_path: bwb_structures_dataset.csv
+  output_root: final_reproducible_pipeline_results_ensemble5
+  ld_model_dir: models/ld_surrogate
+
+master_seed: 20260819
+
+determinism:
+  strict: true
+  device: cpu
+  torch_num_threads: 1
+
+data:
+  train_fraction: 0.70
+  validation_fraction: 0.15
+  test_fraction: 0.15
+  split_manifest: split_manifest.json
+  forward_duplicate_target_rtol: 1.0e-6
+
+forward_model:
+  # Reuse the already-trained compatible forward artifact.
+  output_dir: final_forwardmodel_results
+  epochs: 2000
+  patience: 300
+  lr_patience: 120
+  learning_rate: 1.0e-3
+  print_every: 25
+  batch_size: 256
+  hidden_width: 384
+  residual_blocks: 4
+  weight_decay: 1.0e-5
+  huber_delta: 0.5
+  force_retrain: false
+
+stress_classifier:
+  # This must be a new directory.  A single-model artifact is not compatible
+  # with the five-member ensemble contract.
+  output_dir: final_stress_classifier_ensemble5_results
+  stress_limit_mpa: 335.0
+  probability_threshold: 0.90
+  noise_median_probability_threshold: 0.80
+  iterations: 4000
+  early_stopping_rounds: 300
+  thread_count: 1
+  force_retrain: false
+
+  # No five-fold hyperparameter selection.  All five declared configurations
+  # are trained once with distinct named seeds and retained as members.
+  candidates:
+    - {depth: 6, learning_rate: 0.030, l2_leaf_reg: 3.0, retain_as_ensemble_member: true}
+    - {depth: 7, learning_rate: 0.030, l2_leaf_reg: 5.0, retain_as_ensemble_member: true}
+    - {depth: 8, learning_rate: 0.025, l2_leaf_reg: 5.0, retain_as_ensemble_member: true}
+    - {depth: 9, learning_rate: 0.020, l2_leaf_reg: 8.0, retain_as_ensemble_member: true}
+    - {depth: 10, learning_rate: 0.020, l2_leaf_reg: 12.0, retain_as_ensemble_member: true}
+
+ld_model:
+  reject_any_warning: true
+  require_finite_ld_cl_cd: true
+  cache_max_entries: 50000
+
+optimization:
+  output_dir: final_optimization_results_ensemble5
+  repeats: 3
+  rounds:
+    - {total_evaluations_per_case: 480000, prior_weight: 1.00}
+    - {total_evaluations_per_case: 720000, prior_weight: 0.55}
+    # - {total_evaluations_per_case: 960000, prior_weight: 0.30}
+
+  minimum_feasible_unique_designs_per_topology: 21
+  topology_eligibility_split: null
+  topology_prior_split: train
+  gamma_shape: 0.50
+  gamma_scale_fraction: 0.08
+  uniform_exploration_fraction: 0.15
+  minimum_generations_per_topology_repeat: 10
+
+  cma_population: 32
+  cma_initial_sigma: 0.22
+  cma_archive_per_run: 64
+  warm_repeats_after_round_zero: 2
+
+  nominal_probability_threshold: 0.90
+  robust_probability_threshold: 0.80
+
+  # One perturbation level: at most +/-0.5% of each continuous variable's
+  # official bound width.  Search and confirmation use independent banks.
+  noise_fractions_of_bound_width: [0.005]
+  search_noise_samples: 64
+  confirmation_noise_samples: 512
+  confirmation_shortlist_per_case: 128
+
+  local_refine:
+    enabled: true
+    starts_per_case_per_round: 12
+    steps: 300
+    learning_rate: 0.02
+    weight_decay: 1.0e-5
+    trust_radius_fraction: 0.05
+    exact_check_every: 5
+
+  convergence:
+    relative_loss_tolerance: 1.0e-3
+    repeat_loss_spread_tolerance: 5.0e-3
+    required_repeats_same_topology: 2
+
+test_cases:
+  - case_id: 1
+    condition: High Speed Dash
+    LD_target: 6.0
+    Payload_target_m3: 0.75
+    Fuel_target_m3: 0.45
+    Altitude: 15.0
+    KCAS: 120.0
+    AOA: 1.0
+  - case_id: 2
+    condition: Max Endurance
+    LD_target: 10.0
+    Payload_target_m3: 0.80
+    Fuel_target_m3: 0.45
+    Altitude: 15.0
+    KCAS: 45.0
+    AOA: 8.0
+  - case_id: 3
+    condition: Max Capacity
+    LD_target: 15.0
+    Payload_target_m3: 1.00
+    Fuel_target_m3: 0.65
+    Altitude: 5.0
+    KCAS: 220.0
+    AOA: 4.5
+
+analysis:
+  knn_k: 5
+  pairplot_max_dataset_rows: 3000

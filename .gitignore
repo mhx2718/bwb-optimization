@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.matplotlib/
+.venv/
+dist/
+build/
+*.egg-info/
+
+# User-provided data and local surrogate assets
+*.csv
+models/ld_surrogate/
+
+# Generated artifacts
+final_forwardmodel_results/
+final_stress_classifier_results/
+final_optimization_results/
+final_reproducible_pipeline_results/

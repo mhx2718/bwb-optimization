@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bwb-reproducible-pipeline"
+version = "0.1.0"
+description = "Deterministic forward modeling and topology-aware BWB optimization"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "scipy>=1.10",
+  "scikit-learn>=1.3",
+  "torch>=2.1",
+  "catboost>=1.2.8",
+  "cma>=4.4",
+  "joblib>=1.3",
+  "PyYAML>=6.0",
+  "matplotlib>=3.7",
+  "seaborn>=0.13",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.12"]
+notebook = ["jupyterlab>=4", "ipykernel>=6"]
+
+[project.scripts]
+bwb-pipeline = "bwb_pipeline.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
