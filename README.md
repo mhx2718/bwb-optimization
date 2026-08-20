@@ -219,17 +219,7 @@ The run produces, per case and in combined form:
 - per-generation CMA traces and warm/cold provenance;
 - local-refinement attempts and accepted replacements;
 - common-bank confirmed candidates and one selected design;
-- convergence diagnostics across all three repeats;
-- the empirical four-objective nondominated archive of the frozen,
-  common-bank confirmation shortlist;
-- dataset LOO 5-NN support distances and optimized-design support percentiles;
-- pairplots, tabular convergence diagnostics, a kNN ECDF, and empirical Pareto
-  plots;
-- a strict JSON reproducibility manifest with artifact hashes.
 
-LOO k-NN operates on unique 21D designs scaled by the fixed official bounds.
-This prevents repeated flight-condition rows from generating meaningless zero
-distances. Row-level tables retain a mapping back to the unique-design result.
 
 ## Tests
 
